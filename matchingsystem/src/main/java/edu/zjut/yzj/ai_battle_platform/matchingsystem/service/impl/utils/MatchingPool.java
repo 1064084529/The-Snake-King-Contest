@@ -7,6 +7,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -23,25 +24,32 @@ public class MatchingPool extends Thread {
     private final ReentrantLock lock = new ReentrantLock();
     private static RestTemplate restTemplate;
     private final static String startGameUrl = "http://127.0.0.1:3000/pk/start/game/";
+    private final HashSet<Integer> matchPoolUserIds = new HashSet<>();
 
     @Autowired
     public void setRestTemplate(RestTemplate restTemplate) {
         MatchingPool.restTemplate = restTemplate;
     }
 
+
     /**
-     * 往匹配池中添加玩家
+     * 往匹配池中添加玩家,如果匹配池中已经存在该名玩家，则添加失败
      * @param userId
      * @param rating
      * @param botId
      */
-    public void addPlayer(Integer userId, Integer rating, Integer botId) {
+    public boolean addPlayer(Integer userId, Integer rating, Integer botId) {
+        if (matchPoolUserIds.contains(userId)) return false;
         lock.lock();
         try {
             players.add(new Player(userId, rating, botId, 0));
+            //往hash表中存入userId
+            matchPoolUserIds.add(userId);
         } finally {
             lock.unlock();
         }
+
+        return true;
     }
 
     /**
@@ -51,6 +59,8 @@ public class MatchingPool extends Thread {
     public void removePlayer(Integer userId) {
         lock.lock();
         try {
+            System.out.println("移除玩家id: " + userId);
+            matchPoolUserIds.remove(userId);
             List<Player> newPlayers = new ArrayList<>();
             for (Player player: players) {
                 if (!player.getUserId().equals(userId)) {
@@ -108,6 +118,9 @@ public class MatchingPool extends Thread {
                 Player a = players.get(i), b = players.get(j);
                 if (checkMatched(a, b)) {
                     used[i] = used[j] = true;
+                    //匹配成功，把玩家从hash表中移除
+                    matchPoolUserIds.remove(a.getUserId());
+                    matchPoolUserIds.remove(b.getUserId());
                     sendResult(a, b);
                     break;
                 }
@@ -128,6 +141,10 @@ public class MatchingPool extends Thread {
         while (true) {
             try {
                 Thread.sleep(1000);
+                System.out.println("匹配池中的玩家有：");
+                System.out.println(players);
+                System.out.println("玩家id的集合："+matchPoolUserIds);
+
                 lock.lock();
                 try {
                     increaseWaitingTime();

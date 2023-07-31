@@ -8,6 +8,7 @@ import edu.zjut.yzj.ai_battle_platform.backend.service.user.account.LoginService
 import edu.zjut.yzj.ai_battle_platform.backend.utils.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -109,7 +110,7 @@ public class LoginServiceImpl implements LoginService {
         String code = VerificationCodeUtil.code(6);
         //把验证码存入到redis中
         redisUtil.set(key, code, 300L);
-        //todo 调用阿里云短信接口给用户发短信
+        System.out.println("往redis中存入key："+key+" value= "+ code);
         try {
             msgUtil.sendMsg(phone,code);
         } catch (Exception e) {

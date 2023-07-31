@@ -90,6 +90,7 @@ public class WebSocketServer {
             users.remove(this.user.getId());
         }
         //todo 如果匹配池中有当前玩家，则把当前玩家从匹配池中移除，这样可以防止自己与自己匹配
+        stopMatching();
     }
 
     /**
@@ -156,7 +157,7 @@ public class WebSocketServer {
     }
 
     /**
-     * 取消匹配的方法
+     * 取消匹配的方法,会把
      */
     private void stopMatching() {
         System.out.println("stop matching");

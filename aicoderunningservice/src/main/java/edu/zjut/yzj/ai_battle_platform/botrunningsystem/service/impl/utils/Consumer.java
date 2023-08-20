@@ -1,5 +1,6 @@
 package edu.zjut.yzj.ai_battle_platform.botrunningsystem.service.impl.utils;
 
+import edu.zjut.yzj.ai_battle_platform.botrunningsystem.utils.FileUtils;
 import org.joor.Reflect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -54,15 +55,29 @@ public class Consumer extends Thread {
                 addUid(bot.getBotCode(), uid)
         ).create().get();
 
-        File file = new File("/apps/kob/gameinfo/gameinfo.txt");
+        //每个用户单独一个目录
+        String filePath="/apps/kob/gameinfo/users/"+bot.getUserId()+"/gameinfo.txt";
 
-        //把当前的局面信息写到 /apps/kob/gameinfo/gameinfo.txt这个文件中
+        File file = new File(filePath);
+        //如果这个文件不存在则级联创建这个文件
+        FileUtils.createFile(file);
+
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+
+        //把当前的局面信息写到 "/apps/kob/gameinfo/users/"+bot.getUserId()+"/gameinfo.txt"这个文件中
         try (PrintWriter fout=new PrintWriter(file)){
             fout.println(bot.getInput());
             fout.flush();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+
+
 
         //AI代码的真正运行在这一步
         //获得AI代码的运行结果，也就是0123这四个数字其中之一

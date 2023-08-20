@@ -31,6 +31,7 @@ public class AddServiceImpl implements AddService {
         String title = data.get("title");
         String description = data.get("description");
         String content = data.get("content");
+        System.out.println("代码内容");
 
         Map<String, String> map = new HashMap<>();
 

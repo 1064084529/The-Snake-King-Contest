@@ -9,6 +9,9 @@
         <module>matchingservice</module>
         <module>primaryservice</module>
         <module>aicoderunningservice</module>
+        <module>aicoderunningservice/test</module>
+        <module>testaaa</module>
+        <module>docker-java</module>
     </modules>
     <name>microservices</name>
     <packaging>pom</packaging>

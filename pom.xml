@@ -3,15 +3,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>edu.zjut.yzj.kob</groupId>
-    <artifactId>backendcloud</artifactId>
+    <artifactId>Microservices</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <modules>
-        <module>matchingsystem</module>
-        <module>backend</module>
-        <module>botrunningsystem</module>
+        <module>matchingservice</module>
+        <module>primaryservice</module>
+        <module>aicoderunningservice</module>
     </modules>
-    <name>backendcloud</name>
-    <description>backendcloud</description>
+    <name>microservices</name>
     <packaging>pom</packaging>
 
     <properties>

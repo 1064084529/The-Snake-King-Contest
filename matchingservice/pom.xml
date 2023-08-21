@@ -56,7 +56,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <!--这里写上main方法所在类的路径-->
                 <configuration>
-                    <mainClass>edu.zjut.yzj.ai_battle_platform.matchingsystem.MatchingServiceApplication</mainClass>
+                    <mainClass>edu.zjut.yzj.the_snake_king_contest.matchingsystem.MatchingServiceApplication</mainClass>
                 </configuration>
                 <executions>
                     <execution>

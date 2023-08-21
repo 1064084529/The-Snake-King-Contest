@@ -31,6 +31,12 @@
             <version>2.0.24</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.11.0</version>
+        </dependency>
 
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -133,7 +139,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <!--这里写上main方法所在类的路径-->
                 <configuration>
-                    <mainClass>edu.zjut.yzj.ai_battle_platform.backend.PrimaryServiceApplication</mainClass>
+                    <mainClass>edu.zjut.yzj.the_snake_king_contest.primary.PrimaryServiceApplication</mainClass>
                 </configuration>
                 <executions>
                     <execution>

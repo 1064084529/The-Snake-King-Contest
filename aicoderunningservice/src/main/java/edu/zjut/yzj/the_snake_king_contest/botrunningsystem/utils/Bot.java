@@ -1,4 +1,4 @@
-package org.example;
+package edu.zjut.yzj.the_snake_king_contest.botrunningsystem.utils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -12,11 +12,28 @@ import java.util.Scanner;
 public class Bot{
     public static Integer get() {
         File file = new File("/app/gameinfo.txt");
+        while (!file.exists()){
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
         try {
             Scanner sc = new Scanner(file);
-            return nextMove(sc.next());
+            while (!sc.hasNext()){
+                Thread.sleep(100);
+            }
+            String d = sc.next();
+            PrintWriter writer = new PrintWriter("/app/gameinfo.txt");
+            writer.print("");
+            writer.close();
+            return Integer.parseInt(d);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
 
         return 0;
@@ -89,17 +106,11 @@ public class Bot{
 
     public static void createFile(File file){
         if (file.exists()) {
-            System.out.println("File exists");
         } else {
-            System.out.println("File not exists, create it ...");
-            //getParentFile() 获取上级目录（包含文件名时无法直接创建目录的）
             if (!file.getParentFile().exists()) {
-                System.out.println("not exists");
-                //创建上级目录
                 file.getParentFile().mkdirs();
             }
             try {
-                //在上级目录里创建文件
                 file.createNewFile();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -112,7 +123,7 @@ public class Bot{
         String outPutFilePath="/app/result.txt";
         File resFile = new File(outPutFilePath);
         createFile(resFile);
-        //确保文件被级联创建完成
+
         try {
             Thread.sleep(100);
         } catch (InterruptedException e) {
@@ -126,12 +137,6 @@ public class Bot{
             e.printStackTrace();
         }
 
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-
     }
 }
+

@@ -1,7 +1,6 @@
 package edu.zjut.yzj.the_snake_king_contest.botrunningsystem.service.impl.utils;
 
 import edu.zjut.yzj.the_snake_king_contest.botrunningsystem.utils.MyFileUtils;
-import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
@@ -32,7 +31,7 @@ public class Consumer extends Thread {
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
-            this.stop();  // todo 这里其实不一定能真的中断执行bot代码的线程
+            this.interrupt();  // todo 这里其实不一定能真的中断执行bot代码的线程
         }
     }
 
@@ -150,7 +149,7 @@ public class Consumer extends Thread {
      * 如果容器已经存在，则重启即可，如果重启尚未存在，则启动容器，并设置好正确的容器名称
      * @param containerName
      */
-    private void startOrRestartContainer(String containerName) {
+    public  void startOrRestartContainer(String containerName) {
         Runtime runtime = Runtime.getRuntime();
         if (containerIsExist(containerName)) {
             System.out.println("容器已经存在，重启即可");
@@ -307,32 +306,5 @@ public class Consumer extends Thread {
             }
             lastRecentlyModifiedTimestamp=curRecentlyModifiedTimestamp;
         }
-
-        //轮询检查目标文件是否就绪
-//        while (true) {
-//            //检查容器是否结束
-//            boolean active = containerIsActive("bot" + bot.getUserId());
-//            if (!active) {  //容器已经关闭，结果已经写到文件
-//                System.out.println("容器已经结束，可以读取文件");
-//                //读取文件内容，发送
-//                Integer direction = get();
-//                if (direction >= 0 && direction <= 4) {
-////                    System.out.println("move-direction: " + bot.getUserId() + " " + direction);
-//                    MultiValueMap<String, String> data = new LinkedMultiValueMap<>();
-//                    data.add("user_id", bot.getUserId().toString());
-//                    data.add("direction", direction.toString());
-//                    restTemplate.postForObject(receiveBotMoveUrl, data, String.class);
-//
-//                }
-//                break;
-//            } else {    //容器依然活跃
-//                System.out.println("容器正在运行中，等会再去读文件");
-//                try {
-//                    Thread.sleep(100);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }
     }
 }

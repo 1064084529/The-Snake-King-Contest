@@ -13,6 +13,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Scanner;
 
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -108,9 +109,9 @@ public class BotPool extends Thread {
      */
     private void consume(Bot bot) {
         //todo 这里可以用线程池去实现
-        Runnable task = new Runnable() {
+        Callable task = new Callable<Void>() {
             @Override
-            public void run() {
+            public Void call() throws Exception {
 
                 //consumer线程要往这个文件写入当前的局面信息，供AI代码读取
                 String outputPath = "/apps/kob/gameinfo/users/" + bot.getUserId() + "/gameinfo.txt";
@@ -121,11 +122,8 @@ public class BotPool extends Thread {
                 }
 
                 MyFileUtils.createFile(outputFile);
-                try {   //确保文件创建成功
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
+                //确保文件创建成功
+                Thread.sleep(100);
 
                 //把当前的局面信息写到 /apps/kob/gameinfo/users/"+bot.getUserId()+"/gameinfo.txt"这个文件中
                 try (PrintWriter fout = new PrintWriter(outputFile)) {
@@ -175,33 +173,22 @@ public class BotPool extends Thread {
                 startOrRestartContainer(containerName,bot);
 
                 //等容器启动
-                try {
-                    Thread.sleep(300);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
+                Thread.sleep(300);
 
                 //检查目标文件是否就绪
                 String resFilePath = "/apps/kob/gameinfo/users/" + bot.getUserId() + "/result.txt";
                 File resFile = new File(resFilePath);
                 long lastRecentlyModifiedTimestamp=0L;
                 while (true) {
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
+                    Thread.sleep(100);
                     //读取结果文件的最后修改时间
                     long curRecentlyModifiedTimestamp= resFile.lastModified();
                     System.out.println("res文件的最后修改时间是：" + new Date(curRecentlyModifiedTimestamp));
                     if (curRecentlyModifiedTimestamp > lastRecentlyModifiedTimestamp+10) {
                         //说明文件更新了，可以从中读取结果
                         System.out.println("结果文件有更新，可以去读取用户代码运行的结果了");
-                        try {
-                            Thread.sleep(300);
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
-                        }
+                        Thread.sleep(300);
+
                         String resStr = null;
                         try {
                             Scanner sc = new Scanner(resFile);
@@ -220,21 +207,17 @@ public class BotPool extends Thread {
                         //删除结果文件
                         resFile.delete();
                         //确保删除成功
-                        try {
-                            Thread.sleep(100);
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
-                        }
+                        Thread.sleep(100);
                         restTemplate.postForObject(receiveBotMoveUrl, data, String.class);
                         break;//一定要终止循环
                     }
                     lastRecentlyModifiedTimestamp=curRecentlyModifiedTimestamp;
                 }
+                return null;
             }
         };
 
         pool.submit(task);
-
 //        Consumer consumer = new Consumer();
 //        consumer.startTimeout(5000, bot); //启动新线程去执行，5s没执行完直接放弃
     }
